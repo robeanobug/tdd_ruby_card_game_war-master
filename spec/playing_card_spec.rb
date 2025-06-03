@@ -6,5 +6,8 @@ describe 'PlayingCard' do
     expect(card).to_not be_nil
     expect(card).to be_a PlayingCard
   end
-  
+
+  xit 'should compare rank and suit, not equality' do
+    
+  end
 end

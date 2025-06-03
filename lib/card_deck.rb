@@ -2,25 +2,41 @@ require_relative 'playing_card'
 
 class CardDeck
   attr_reader :cards
+
   def initialize
-    @cards = []
-    PlayingCard::SUITS.each do |suit|
-      PlayingCard::RANKS.each do |rank|
-        @cards.push(PlayingCard.new(rank, suit))
+    @cards = build_deck
+  end
+
+  def build_deck
+    PlayingCard::SUITS.map do |suit|
+      PlayingCard::RANKS.map do |rank|
+        PlayingCard.new(rank, suit)
       end
-    end
+    end.flatten
   end
 
   def cards_left
-    @cards.length
+    cards.length
   end
 
   def deal
-    cards_left
-    @cards.pop
+    raise StandardError if cards_left == 0
+    cards.pop
   end
 
-  def shuffle
-    @cards.shuffle
+  def add_card(card)
+    cards.unshift(card)
+  end
+
+  def shuffle!
+    cards.shuffle!
+  end
+
+  def to_s
+	  "Rank: #{rank} Suit: #{suit}"
+  end
+
+  def ==(other_deck)
+    cards == other_deck.cards
   end
 end
