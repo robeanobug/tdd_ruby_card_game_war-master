@@ -7,7 +7,15 @@ describe 'PlayingCard' do
     expect(card).to be_a PlayingCard
   end
 
-  xit 'should compare rank and suit, not equality' do
-    
+  it 'should return true when 2 cards are equal' do
+    card1 = PlayingCard.new('A', 'H')
+    card2 = PlayingCard.new('A', 'H')
+
+    expect(card1).to eq(card2)
+  end
+
+  it 'should return the value of a card' do
+    value = PlayingCard.new('A', 'H').to_value
+    expect(value).to eq(12)
   end
 end

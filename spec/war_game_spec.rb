@@ -1,49 +1,76 @@
 require_relative '../lib/war_game'
 class DummyDeck < CardDeck
-  def shuffle
-    # nothing
+  def shuffle!
+    # overwrites shuffle opperation
   end
 end
+
 describe 'WarGame' do
+  let (:game) { WarGame.new }
   it 'should initialize the game with player1 and player2' do
-    game = WarGame.new
     expect(game).to_not be_nil
     expect(game.player1).to be_a WarPlayer
     expect(game.player2).to be_a WarPlayer
   end
 
   it 'should deal an equal amount of cards to the players' do
-    game = WarGame.new
     game.deal_cards
     expect(game.player1.hand.length).to eq(26)
   end
 
-  xit 'should start the game' do
-    # unsure what to test
+  it 'should add to pot' do
+    game.player1.hand = [PlayingCard.new('K', 'H')]
+    game.player2.hand = [PlayingCard.new('A', 'H')]
+    pot = game.add_to_pot
+
+    expect(pot.length).to eq(2)
   end
 
-  it 'should play a round' do
-    game = WarGame.new
-    game.deal_cards
-    
-    # expect(game.play_round).to be_a WarPlayer
-    # what to expect at the end of the round, look at number of cards in player's hands when they start with one card each
+  it 'should return round winner of player with higher card' do
+    pot = [PlayingCard.new('K', 'H'), PlayingCard.new('A', 'H')]
+
+    expect(game.determine_round_winner(pot)).to eq(game.player2)
   end
 
-  xit 'should have both players lay down another card if it is a tie' do
-    # set up tie scenario maybe like dummy deck or accessing more cards from the players' hands
+  it 'should return false if players lay down cards of same value' do
+    pot = [PlayingCard.new('K', 'H'), PlayingCard.new('K', 'S')]
+
+    expect(game.determine_round_winner(pot)).to be_falsey
   end
 
-  xit 'should pick the card with the higher value' do
-    
-  end
+  it 'should collect the cards and give them to the player' do
+    game.player1.hand = [PlayingCard.new('3', 'H')]
+    game.player2.hand = [PlayingCard.new('4', 'H')]
+    game.play_round
 
-  xit 'should collect the cards and give them to the player' do
-    
+    expect(game.player2.hand.length).to eq(2)
   end
 
   it 'should declare a winner when a player runs out of cards' do
-    game = WarGame.new
+    game.player1.hand = []
+    game.player2.hand = [PlayingCard.new('3', 'H')]
+    winner = game.winner
+
+    expect(winner).to eq(game.player2)
+  end
+
+  it 'should return true if it is a tie' do
+    game.player1.hand = []
+    game.player2.hand = []
+
+    expect(game.tie?).to be_truthy
+  end
+
+  it 'should return false if it is not a tie' do
+    game.player1.hand = [PlayingCard.new('3', 'H')]
+    game.player2.hand = []
+
+    expect(game.tie?).to be_falsey
+  end
+
+  xit 'should deal the cards' do
     game.start
+
+    expect(game.player1.hand.length).to eq(26)
   end
 end

@@ -12,11 +12,7 @@ class PlayingCard
     suit == other_card.suit
   end
 
-  def to_index
+  def to_value
     RANKS.find_index(rank)
-  end
-
-  def add_card
-    # TODO
   end
 end
