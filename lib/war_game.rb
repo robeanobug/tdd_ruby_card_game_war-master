@@ -47,11 +47,7 @@ class WarGame
     return player2 if player1.is_out_of_cards
   end
 
-
   def start
     deal_cards
-    until tie? || winner
-      play_round
-    end
   end
 end

@@ -1,5 +1,6 @@
 class WarPlayer
   attr_accessor :name, :hand
+  PLAYER_COUNT = 2
   def initialize(name)
     @name = name
     @hand = []
