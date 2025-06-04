@@ -30,13 +30,10 @@ class WarGame
 
   def print_message(round_winner, player1_card, player2_card)
     if player1 == round_winner
-      winning_card = player1_card
-      losing_card = player2_card
+    return "#{round_winner.name} took #{player2_card.rank} of #{player2_card.suit} with #{player1_card.rank} of #{player1_card.suit}"
     else
-      winning_card = player2_card
-      losing_card = player1_card
+    return "#{round_winner.name} took #{player1_card.rank} of #{player1_card.suit} with #{player2_card.rank} of #{player2_card.suit}"
     end
-    "#{round_winner.name} took #{losing_card.rank} of #{losing_card.suit} with #{winning_card.rank} of #{winning_card.suit}"
   end
   
   def winner
