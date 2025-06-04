@@ -30,6 +30,7 @@ describe WarSocketServer do
     @clients = []
     @server = WarSocketServer.new
     @server.start
+    # puts "server listening"
     sleep 0.1 # Ensure server is ready for clients
   end
 
@@ -71,27 +72,72 @@ describe WarSocketServer do
     client1 = MockWarSocketClient.new(@server.port_number)
     @clients.push(client1)
     @server.accept_new_client("Player 1")
-    client1.capture_output
+
     client2 = MockWarSocketClient.new(@server.port_number)
     @clients.push(client1)
     @server.accept_new_client("Player 2")
-    client2.capture_output
     @server.create_game_if_possible
 
     expect(client1.capture_output).to match /starting/i
     expect(client2.capture_output).to match /starting/i
   end
 
-  it 'should receive client ready message' do
+  it 'should play round when both players are ready and output to client' do
     client1 = MockWarSocketClient.new(@server.port_number)
     @clients.push(client1)
     @server.accept_new_client("Player 1")
-    client1.capture_output
+    client1.provide_input('Ready! Player 1')
+
+    client2 = MockWarSocketClient.new(@server.port_number)
+    @clients.push(client2)
+    @server.accept_new_client("Player 2")
+    client2.provide_input('Ready! Player 2')
+
     @server.create_game_if_possible
+    @server.play_next_round
+    
+    expect(@server.games.first.round).to eq 1
+    expect(client1.capture_output).to match /winner is/i
+  end
+
+  it 'should not play a round if both players are not ready' do
+    client1 = MockWarSocketClient.new(@server.port_number)
+    client2 = MockWarSocketClient.new(@server.port_number)
+
+    @clients.push(client1)
+    @clients.push(client2)
+
+    @server.accept_new_client("Player 1")
+    @server.accept_new_client("Player 2")
+
     client1.provide_input('Ready!')
 
-    expect(socket.capture_output).to match /ready/i
+    @server.create_game_if_possible
+    @server.play_next_round
+    
+    expect(@server.games.first.round).to eq 0
   end
+
+  it 'should not play a round until both players are ready' do
+    client1 = MockWarSocketClient.new(@server.port_number)
+    client2 = MockWarSocketClient.new(@server.port_number)
+
+    @clients.push(client1)
+    @clients.push(client2)
+
+    @server.accept_new_client("Player 1")
+    @server.accept_new_client("Player 2")
+
+    @server.create_game_if_possible
+    @server.play_next_round
+    
+    expect(@server.games.first.round).to eq 0
+  end
+
+  it 'should handle a tie'
+  it 'should print the output of the round to the user'
+  it 'should print a winner'
+
   # Add more tests to make sure the game is being played
   # For example:
   #   make sure the mock client gets appropriate output

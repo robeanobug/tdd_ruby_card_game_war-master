@@ -1,5 +1,6 @@
 require 'socket'
 require_relative 'war_game'
+require_relative 'war_player'
 class WarSocketServer
   def initialize
   end
@@ -37,11 +38,26 @@ class WarSocketServer
 
   def create_game_if_possible
     if players.count == 2
-      games << WarGame.new
+      game = WarGame.new
+      game.start
+      games << game
       clients.each do |client|
         client.puts 'War is starting...'
       end
     end
+  end
+
+  def play_next_round
+    responses = []
+    clients.each do |client|
+      client.puts "Press enter to play the round."
+      begin
+        sleep(0.1)
+        responses << client.read_nonblock(1000)
+      rescue IO::WaitReadable
+      end
+    end
+    games.first.play_round if responses.size > 1
   end
 
   def stop

@@ -24,24 +24,41 @@ describe 'WarGame' do
   end
 
   describe '#play_round' do
-    it 'should add to pot' do
-      players_count = 2
+    it 'should call play_round again in the case of a round tie' do
+      game.player1.hand = [PlayingCard.new('K', 'H'), PlayingCard.new('K', 'H')]
+      game.player2.hand = [PlayingCard.new('A', 'H'), PlayingCard.new('K', 'S')]
+      game.play_round
+
+      expect(game.player1.hand.empty?).to be_truthy
+      expect(game.player2.hand.length).to eq 4
+    end
+
+    it 'should add pot to player1 when winner' do
+      game.player1.hand = [PlayingCard.new('A', 'H')]
+      game.player2.hand = [PlayingCard.new('K', 'H')]
+      game.play_round
+
+      expect(game.player1.hand.length).to eq 2
+      expect(game.player2.hand.empty?).to be_truthy
+    end
+
+    it 'should add pot to player2 when winner' do
       game.player1.hand = [PlayingCard.new('K', 'H')]
       game.player2.hand = [PlayingCard.new('A', 'H')]
-      pot = game.add_to_pot
+      game.play_round
 
-      expect(pot.length).to eq(players_count)
+      expect(game.player2.hand.length).to eq 2
+      expect(game.player1.hand.empty?).to be_truthy
     end
-    it 'should return round winner of player with higher card' do
-      pot = [PlayingCard.new('K', 'H'), PlayingCard.new('A', 'H')]
 
-      expect(game.determine_round_winner(pot)).to eq(game.player2)
+    it "should return round player2 if they have the higher card" do
+      game.player1.hand = [PlayingCard.new('K', 'H')]
+      game.player2.hand = [PlayingCard.new('A', 'H')]
+      message = game.play_round
+
+      expect(message).to eq('Player 2 took K of H with A of H')
     end
-    it 'should return false if players lay down cards of same value' do
-      pot = [PlayingCard.new('K', 'H'), PlayingCard.new('K', 'S')]
-  
-      expect(game.determine_round_winner(pot)).to be_falsey
-    end
+
     it 'should collect the cards and give them to the player' do
       players_count = 2
       game.player1.hand = [PlayingCard.new('3', 'H')]
@@ -49,6 +66,30 @@ describe 'WarGame' do
       game.play_round
   
       expect(game.player2.hand.length).to eq(players_count)
+    end
+    
+    it 'should return player1 if player2 runs out of cards during a war' do
+      game.player1.hand = [PlayingCard.new('A', 'H'), PlayingCard.new('K', 'S')]
+      game.player2.hand = [PlayingCard.new('K', 'H')]
+      winner = game.play_round
+
+      expect(winner).to eq(game.player1)
+    end
+
+    it 'should return player2 if player1 runs out of cards during a war' do
+      game.player1.hand = [PlayingCard.new('K', 'H')]
+      game.player2.hand = [PlayingCard.new('A', 'H'), PlayingCard.new('K', 'S')]
+      winner = game.play_round
+
+      expect(winner).to eq(game.player2)
+    end
+
+    it 'should add 1 to the round counter' do
+      game.player1.hand = [PlayingCard.new('K', 'H')]
+      game.player2.hand = [PlayingCard.new('A', 'H')]
+      game.play_round
+
+      expect(game.round).to eq(1)
     end
   end
   
@@ -60,20 +101,13 @@ describe 'WarGame' do
 
       expect(winner).to eq(game.player2)
     end
-  end
 
-  describe '#tie?' do
-    it 'should return true if it is a tie' do
-      game.player1.hand = []
-      game.player2.hand = []
+    it 'should return false if players still have cards' do
+      game.player1.hand = [PlayingCard.new('4', 'H')]
+      game.player2.hand = [PlayingCard.new('3', 'H')]
+      winner = game.winner
 
-      expect(game.tie?).to be_truthy
-    end
-    it 'should return false if it is not a tie' do
-      game.player1.hand = [PlayingCard.new('3', 'H')]
-      game.player2.hand = []
-  
-      expect(game.tie?).to be_falsey
+      expect(winner).to be_falsey
     end
   end
 
