@@ -15,7 +15,7 @@ class MockWarSocketClient
 
   def capture_output(delay=0.1)
     sleep(delay)
-    @output = @socket.read_nonblock(1000) # not gets which blocks
+    @output = @socket.read_nonblock(200_000) # not gets which blocks
   rescue IO::WaitReadable
     @output = ""
   end
@@ -126,6 +126,19 @@ describe WarSocketServer do
     @server.play_next_round
     
     expect(@server.games.first.round).to eq 0
+  end
+
+  it 'should run game' do
+    @clients.push(client1)
+    @clients.push(client2)
+
+    @server.accept_new_client("Player 1")
+    @server.accept_new_client("Player 2")
+
+    @server.create_game_if_possible
+    @server.run_game
+    
+    expect(client1.capture_output).to match /winner/i
   end
 
   # Add more tests to make sure the game is being played

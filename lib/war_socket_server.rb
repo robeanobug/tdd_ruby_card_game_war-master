@@ -67,6 +67,13 @@ class WarSocketServer
     end
   end
 
+  def run_game
+    until games.first.winner do
+      send_to_client(games.first.play_round)
+    end
+    send_to_client("Winner: #{games.first.winner.name}")
+  end
+
   def stop
     @server.close if @server
   end
