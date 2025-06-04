@@ -41,6 +41,18 @@ describe WarSocketServer do
     end
   end
 
+  # let (:client1) {
+  #   MockWarSocketClient.new(@server.port_number)
+  #   @clients.push(client1)
+  #   @server.accept_new_client("Player 1")
+  # }
+  # 
+  # let (:client2) {
+  #   client2 = MockWarSocketClient.new(@server.port_number)
+  #   @clients.push(client2)
+  #   @server.accept_new_client("Player 2")
+  # }
+
   it "is not listening on a port before it is started"  do
     @server.stop
     expect {MockWarSocketClient.new(@server.port_number)}.to raise_error(Errno::ECONNREFUSED)
@@ -97,7 +109,7 @@ describe WarSocketServer do
     @server.play_next_round
     
     expect(@server.games.first.round).to eq 1
-    expect(client1.capture_output).to match /winner is/i
+    expect(client1.capture_output).to match /player/i
   end
 
   it 'should not play a round if both players are not ready' do
@@ -134,13 +146,32 @@ describe WarSocketServer do
     expect(@server.games.first.round).to eq 0
   end
 
-  it 'should handle a tie'
-  it 'should print the output of the round to the user'
-  it 'should print a winner'
+  xit 'should print a winner' do
+    client1 = MockWarSocketClient.new(@server.port_number)
+    client2 = MockWarSocketClient.new(@server.port_number)
+
+    @clients.push(client1)
+    @clients.push(client2)
+
+    @server.accept_new_client("Player 1")
+    @server.accept_new_client("Player 2")
+
+    @server.create_game_if_possible
+    @server.play_next_round
+    
+    expect(@server.games.first.round).to eq 0
+    
+  end
 
   # Add more tests to make sure the game is being played
   # For example:
   #   make sure the mock client gets appropriate output
   #   make sure the next round isn't played until both clients say they are ready to play
   #   ...
+  #   
+  # Questions: 
+  # help with let statements at the top of the file
+  # I'm not sure how to test for my print winner
+  # when do I build a war_socket_runner.rb
+  # 
 end

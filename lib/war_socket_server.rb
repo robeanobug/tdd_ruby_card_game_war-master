@@ -57,7 +57,14 @@ class WarSocketServer
       rescue IO::WaitReadable
       end
     end
-    games.first.play_round if responses.size > 1
+    message = games.first.play_round if responses.size > 1
+    send_to_client(message)
+  end
+
+  def send_to_client(message)
+    clients.each do |client|
+      puts message
+    end
   end
 
   def stop
