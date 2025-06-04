@@ -45,6 +45,7 @@ class WarSocketServer
         client.puts 'War is starting...'
       end
     end
+    games.first
   end
 
   def play_next_round

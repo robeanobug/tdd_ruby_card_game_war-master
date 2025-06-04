@@ -5,6 +5,7 @@ server.start
 loop do
   server.accept_new_client
   game = server.create_game_if_possible
+  # binding.irb
   server.run_game(game) if game
 rescue
   server.stop
