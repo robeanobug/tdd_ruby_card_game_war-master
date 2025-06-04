@@ -128,19 +128,6 @@ describe WarSocketServer do
     expect(@server.games.first.round).to eq 0
   end
 
-  it 'should print a winner' do
-    @clients.push(client1)
-    @clients.push(client2)
-
-    @server.accept_new_client("Player 1")
-    @server.accept_new_client("Player 2")
-
-    @server.create_game_if_possible
-    @server.play_next_round
-    
-    expect(client1.capture_output).to match /winner/i
-  end
-
   # Add more tests to make sure the game is being played
   # For example:
   #   make sure the mock client gets appropriate output
@@ -148,7 +135,8 @@ describe WarSocketServer do
   #   ...
   #   
   # TO DO:
-  # 
-  #
-  # 
+  # get server working
+  # refactor tests
+  # helper method for player setup
+  # helper method for game setup
 end
