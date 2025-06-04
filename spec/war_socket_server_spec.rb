@@ -41,17 +41,11 @@ describe WarSocketServer do
     end
   end
 
-  # let (:client1) {
-  #   MockWarSocketClient.new(@server.port_number)
-  #   @clients.push(client1)
-  #   @server.accept_new_client("Player 1")
-  # }
-  # 
-  # let (:client2) {
-  #   client2 = MockWarSocketClient.new(@server.port_number)
-  #   @clients.push(client2)
-  #   @server.accept_new_client("Player 2")
-  # }
+  let (:client1) { MockWarSocketClient.new(@server.port_number) }
+  let (:client2) { MockWarSocketClient.new(@server.port_number) }
+
+  # to do helper methods for setup players
+  # setup game helper method
 
   it "is not listening on a port before it is started"  do
     @server.stop
@@ -59,13 +53,11 @@ describe WarSocketServer do
   end
 
   it "accepts new clients and starts a game if possible" do
-    client1 = MockWarSocketClient.new(@server.port_number)
     @clients.push(client1)
     @server.accept_new_client("Player 1")
     @server.create_game_if_possible
     expect(@server.games.count).to be 0
 
-    client2 = MockWarSocketClient.new(@server.port_number)
     @clients.push(client2)
     @server.accept_new_client("Player 2")
     @server.create_game_if_possible
@@ -73,7 +65,6 @@ describe WarSocketServer do
   end
 
   it 'first clients get a welcome message' do
-    client1 = MockWarSocketClient.new(@server.port_number)
     @clients.push(client1)
     @server.accept_new_client("Player 1")
 
@@ -81,12 +72,11 @@ describe WarSocketServer do
   end
 
   it 'all clients get a message when the game starts' do
-    client1 = MockWarSocketClient.new(@server.port_number)
+    # client1 = MockWarSocketClient.new(@server.port_number)
     @clients.push(client1)
     @server.accept_new_client("Player 1")
 
-    client2 = MockWarSocketClient.new(@server.port_number)
-    @clients.push(client1)
+    @clients.push(client2)
     @server.accept_new_client("Player 2")
     @server.create_game_if_possible
 
@@ -95,12 +85,10 @@ describe WarSocketServer do
   end
 
   it 'should play round when both players are ready and output to client' do
-    client1 = MockWarSocketClient.new(@server.port_number)
     @clients.push(client1)
     @server.accept_new_client("Player 1")
     client1.provide_input('Ready! Player 1')
 
-    client2 = MockWarSocketClient.new(@server.port_number)
     @clients.push(client2)
     @server.accept_new_client("Player 2")
     client2.provide_input('Ready! Player 2')
@@ -113,9 +101,6 @@ describe WarSocketServer do
   end
 
   it 'should not play a round if both players are not ready' do
-    client1 = MockWarSocketClient.new(@server.port_number)
-    client2 = MockWarSocketClient.new(@server.port_number)
-
     @clients.push(client1)
     @clients.push(client2)
 
@@ -131,9 +116,6 @@ describe WarSocketServer do
   end
 
   it 'should not play a round until both players are ready' do
-    client1 = MockWarSocketClient.new(@server.port_number)
-    client2 = MockWarSocketClient.new(@server.port_number)
-
     @clients.push(client1)
     @clients.push(client2)
 
@@ -146,10 +128,7 @@ describe WarSocketServer do
     expect(@server.games.first.round).to eq 0
   end
 
-  xit 'should print a winner' do
-    client1 = MockWarSocketClient.new(@server.port_number)
-    client2 = MockWarSocketClient.new(@server.port_number)
-
+  it 'should print a winner' do
     @clients.push(client1)
     @clients.push(client2)
 
@@ -159,8 +138,7 @@ describe WarSocketServer do
     @server.create_game_if_possible
     @server.play_next_round
     
-    expect(@server.games.first.round).to eq 0
-    
+    expect(client1.capture_output).to match /winner/i
   end
 
   # Add more tests to make sure the game is being played
@@ -169,9 +147,8 @@ describe WarSocketServer do
   #   make sure the next round isn't played until both clients say they are ready to play
   #   ...
   #   
-  # Questions: 
-  # help with let statements at the top of the file
-  # I'm not sure how to test for my print winner
-  # when do I build a war_socket_runner.rb
+  # TO DO:
+  # 
+  #
   # 
 end

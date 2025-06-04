@@ -63,7 +63,7 @@ class WarSocketServer
 
   def send_to_client(message)
     clients.each do |client|
-      puts message
+      client.puts message
     end
   end
 
