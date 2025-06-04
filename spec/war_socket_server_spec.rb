@@ -149,7 +149,8 @@ describe WarSocketServer do
   #   
   # TO DO:
   # get server working
+  # 
   # refactor tests
-  # helper method for player setup
-  # helper method for game setup
+  # - helper method for player setup
+  # - helper method for game setup
 end
