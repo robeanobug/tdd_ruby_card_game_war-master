@@ -2,7 +2,7 @@ require 'socket'
 require_relative 'war_game'
 require_relative 'war_player'
 class WarSocketServer
-  attr_accessor :server, :games, :clients, :players
+  attr_accessor :server, :games, :clients, :players, :responses
   attr_reader :port_number
   def initialize
     @port_number = 3336
@@ -10,10 +10,7 @@ class WarSocketServer
     @games ||= []
     @clients ||= []
     @players ||= []
-  end
-
-  def start
-    @server = TCPServer.new(port_number)
+    @responses ||= []
   end
 
   def accept_new_client(player_name = "Random Player")
@@ -40,14 +37,9 @@ class WarSocketServer
   end
 
   def play_next_round
-    responses = []
     clients.each do |client|
       client.puts "Press enter to play a card:"
-      begin
-        sleep(0.1)
-        responses << client.read_nonblock(1000)
-      rescue IO::WaitReadable
-      end
+      accept_from_client(client)
     end
     message = games.first.play_round if responses.size > 1
     send_to_client(message)
@@ -59,12 +51,24 @@ class WarSocketServer
     end
   end
 
+  def accept_from_client(client)
+    begin
+      sleep(0.1)
+      responses << client.read_nonblock(1000)
+    rescue IO::WaitReadable
+    end
+  end
+
   # run_game needs to take in a parameter
   def run_game
     until games.first.winner do
       send_to_client(games.first.play_round)
     end
     send_to_client("Winner: #{games.first.winner.name}")
+  end
+
+  def start
+    @server = TCPServer.new(port_number)
   end
 
   def stop

@@ -128,7 +128,7 @@ describe WarSocketServer do
     expect(@server.games.first.round).to eq 0
   end
 
-  it 'should run game' do
+  it 'should run the whole game' do
     @clients.push(client1)
     @clients.push(client2)
 
@@ -144,8 +144,8 @@ describe WarSocketServer do
 
   # TO DO:
   # get server working:
-  # build tests for initialize and build up initialize
   # adjust run_game to take in a parameter (game)
+  # 
   # 
   # refactor tests
   # - helper method for player setup
