@@ -1,7 +1,7 @@
 require 'socket'
 
 socket = TCPSocket.new('localhost', 3336)
-while true do
+loop do
   output = ""
   until output != ""
     begin
