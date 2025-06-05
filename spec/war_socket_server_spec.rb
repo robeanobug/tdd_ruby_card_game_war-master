@@ -142,14 +142,10 @@ describe WarSocketServer do
     expect(game).to respond_to(:play_round)
   end
 
-  # Add more tests to make sure the game is being played
-  # For example:
-  #   make sure the mock client gets appropriate output
-  #   make sure the next round isn't played until both clients say they are ready to play
-  #   ...
-  #   
   # TO DO:
-  # get server working
+  # get server working:
+  # build tests for initialize and build up initialize
+  # adjust run_game to take in a parameter (game)
   # 
   # refactor tests
   # - helper method for player setup
